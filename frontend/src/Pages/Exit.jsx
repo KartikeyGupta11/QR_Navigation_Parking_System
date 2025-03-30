@@ -2,29 +2,32 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import exitImage from "/exit-image.jpg"; // Import the image
+import SERVER_URL from "../ServerURL";
 
 const Exit = () => {
   const [loading, setLoading] = useState(false);
-  const [carNo, setCarNo] = useState("");
+  const [carNumber, setcarNumber] = useState("");
   const navigate = useNavigate(); // Hook to handle navigation
 
   const handleSave = async () => {
-    // setLoading(true);
-    // try {
-
-    //   const response = await axios.post("/currentdata/exit", { carNo });
-
-    //   if (response.data.success) {
-    //     navigate("/thank-you");
-    //   } else {
-    //     navigate("/api/check-car");
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to check car details:", error);
-    //   navigate("/api/check-car");
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+      const response = await axios.delete(`${SERVER_URL}/api/v2/DeleteEntry`,{
+        data: { CarNumber: carNumber }
+      });
+      console.log(response)
+      
+      if (response.data.success) {
+        navigate("/thank-you");
+      } else {
+        navigate("/api/check-car");
+      }
+    } catch (error) {
+      console.error("Failed to check car details:", error);
+      navigate("/api/check-car");
+    } finally {
+      setLoading(false);
+    }
     navigate("/thank-you");
   };
 
@@ -48,16 +51,16 @@ const Exit = () => {
           <div className="flex flex-col border-2 border-sky-300 rounded-md p-6">
             <div className="mb-4">
               <label
-                htmlFor="carNo"
+                htmlFor="carNumber"
                 className="block text-gray-700 font-bold mb-2"
               >
                 Car Number
               </label>
               <input
-                id="carNo"
+                id="carNumber"
                 type="text"
-                value={carNo}
-                onChange={(e) => setCarNo(e.target.value)}
+                value={carNumber}
+                onChange={(e) => setcarNumber(e.target.value)}
                 className="border-2 border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                 placeholder="Enter car number"
               />
